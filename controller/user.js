@@ -60,7 +60,7 @@ const handleLoginUser = async (req, res) => {
 const handleGetProfile = async (req, res) => {
     const {uid} = req.params;
     
-    checkAchievements(uid);
+    // checkAchievements(uid);
     
 
     try{

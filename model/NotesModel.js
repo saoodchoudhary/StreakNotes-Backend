@@ -3,6 +3,7 @@ const mongoose = require('mongoose');
 const NotesSchema = new mongoose.Schema({
   title: { type: String },
   description: { type: String },
+  dateId: { type: String, required: true},
   content: { type: String, },
   voice: { type: String },  // URL to the voice recording
   image: { type: String , },  // URL to the image
