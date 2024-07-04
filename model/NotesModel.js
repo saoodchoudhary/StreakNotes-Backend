@@ -19,6 +19,6 @@ NotesSchema.pre('save', function(next) {
   this.updatedAt = Date.now();
   next();
 });
-const NotesModel = mongoose.model('Notes', NotesSchema);
+const NotesModel = mongoose.model('notes', NotesSchema);
 
 module.exports = NotesModel;

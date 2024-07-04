@@ -6,12 +6,13 @@ const UserSchema = new mongoose.Schema({
     email: { type: String, required: true, unique: true },
     password: { type: String, required: true },
     profileType: { type: String, enum: ['public', 'private'], default: 'public' },
-    streaks: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Streak' }],
+    streaks: [{ type: mongoose.Schema.Types.ObjectId, ref: 'streaks' }],
     score: { type: Number, default: 0 },
     profileImage: { type: String },  // URL to the profile image
     profileBannerImage: { type: String },  // URL to the profile banner image
-    following: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }],
-    followers: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }],
+    following: [{ type: mongoose.Schema.Types.ObjectId, ref: 'users' }],
+    followers: [{ type: mongoose.Schema.Types.ObjectId, ref: 'users' }],
+    notes: [{ type: mongoose.Schema.Types.ObjectId, ref: 'notes' }],
     totalNotes: { type: Number, default: 0 },
     createdAt: { type: Date, default: Date.now },
     updatedAt: { type: Date, default: Date.now }
@@ -23,6 +24,6 @@ UserSchema.pre('save', function (next) {
     next();
 });
 
-const UserModel = mongoose.model('User', UserSchema);
+const UserModel = mongoose.model('users', UserSchema);
 
 module.exports = UserModel;

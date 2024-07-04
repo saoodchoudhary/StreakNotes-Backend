@@ -3,6 +3,7 @@ const generateUsername = require("../helpers/generateUsername");
 const bcrypt = require('bcryptjs');
 const UserModel = require("../model/UserModel");
 const jwt = require('jsonwebtoken');
+const checkAchievements = require("../helpers/checkAchievments");
 
 
 const generateToken = (user) => {
@@ -58,6 +59,9 @@ const handleLoginUser = async (req, res) => {
 
 const handleGetProfile = async (req, res) => {
     const {uid} = req.params;
+    
+    checkAchievements(uid);
+    
 
     try{
         const user = await UserModel.findById(uid);
