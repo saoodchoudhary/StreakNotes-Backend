@@ -25,8 +25,11 @@ app.get('/', (req, res) => {
 
 
 
-// Routes
+//  Routes
 const userRoutes = require('./routes/user');
+const notesRoutes = require('./routes/notes');
+
+app.use('/api/notes', notesRoutes);
 
 app.use('/api/user', userRoutes);
 

@@ -3,9 +3,9 @@ const mongoose = require('mongoose');
 const NotesSchema = new mongoose.Schema({
   title: { type: String },
   description: { type: String },
-  content: { type: String, required: true },
+  content: { type: String, },
   voice: { type: String },  // URL to the voice recording
-  image: { type: String },  // URL to the image
+  image: { type: String , },  // URL to the image
   video: { type: String },  // URL to the video
   owner: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
   sharedWith: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }],
