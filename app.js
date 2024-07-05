@@ -29,11 +29,14 @@ app.get('/', (req, res) => {
 const userRoutes = require('./routes/user');
 const notesRoutes = require('./routes/notes');
 const streakRoutes = require('./routes/streaks');
+const { checkAndHandleBrokenStreaks } = require('./helpers/checkAndHandleBrokenStreaks');
 
 app.use('/api/notes', notesRoutes);
 
 app.use('/api/user', userRoutes);
 app.use('/api/streaks', streakRoutes);
+
+checkAndHandleBrokenStreaks();
 
 
 app.listen(PORT, () => {

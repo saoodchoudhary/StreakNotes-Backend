@@ -13,6 +13,7 @@ const UserSchema = new mongoose.Schema({
     following: [{ type: mongoose.Schema.Types.ObjectId, ref: 'users' }],
     followers: [{ type: mongoose.Schema.Types.ObjectId, ref: 'users' }],
     notes: [{ type: mongoose.Schema.Types.ObjectId, ref: 'notes' }],
+    recievedNotes: [{ type: mongoose.Schema.Types.ObjectId, ref: 'notes' }],
     totalNotes: { type: Number, default: 0 },
     createdAt: { type: Date, default: Date.now },
     updatedAt: { type: Date, default: Date.now }
