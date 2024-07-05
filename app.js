@@ -28,10 +28,12 @@ app.get('/', (req, res) => {
 //  Routes
 const userRoutes = require('./routes/user');
 const notesRoutes = require('./routes/notes');
+const streakRoutes = require('./routes/streaks');
 
 app.use('/api/notes', notesRoutes);
 
 app.use('/api/user', userRoutes);
+app.use('/api/streaks', streakRoutes);
 
 
 app.listen(PORT, () => {

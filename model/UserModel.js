@@ -8,8 +8,8 @@ const UserSchema = new mongoose.Schema({
     profileType: { type: String, enum: ['public', 'private'], default: 'public' },
     streaks: [{ type: mongoose.Schema.Types.ObjectId, ref: 'streaks' }],
     score: { type: Number, default: 0 },
-    profileImage: { type: String },  // URL to the profile image
-    profileBannerImage: { type: String },  // URL to the profile banner image
+    profileImage: { type: String , default : "" },  // URL to the profile image
+    profileBannerImage: { type: String , default : ""},  // URL to the profile banner image
     following: [{ type: mongoose.Schema.Types.ObjectId, ref: 'users' }],
     followers: [{ type: mongoose.Schema.Types.ObjectId, ref: 'users' }],
     notes: [{ type: mongoose.Schema.Types.ObjectId, ref: 'notes' }],

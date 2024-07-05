@@ -74,6 +74,80 @@ const handleGetProfile = async (req, res) => {
         console.error(error);
         res.status(500).json({message: "Internal server error"});
     }
+}
+
+
+const handleGetSuggestionsUser = async (req, res) => {
+    
+    try {
+        const { uid } = req.params;
+
+        // Fetch the current user to get their following list
+        const currentUser = await UserModel.findById(uid).select('following');
+        if (!currentUser) {
+            return res.status(404).json({ message: 'User not found' });
+        }
+
+        // Find users that are not in the current user's following list and not the user themselves
+        const suggestions = await UserModel.find({ 
+            _id: { $ne: uid, $nin: currentUser.following } 
+        }).select('fullName username profileImage ').limit(5);
+
+        res.status(200).json(suggestions);
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ message: 'Server error' });
+    }
+    
+}
+
+
+const handlePostFollowUser = async (req, res) => {
+
+    const {userId, followUserId} = req.body;
+    console.log(req.body);
+    try{
+        const user = await UserModel.findById(userId);
+        const followUser = await UserModel.findById(followUserId);
+        if (!user || !followUser){
+            return res.status(400).json({message: "user does not exist"});
+        }
+
+        if (user.following.includes(followUserId)){
+            return res.status(400).json({message: "user already followed"});
+        }
+
+        await UserModel.findByIdAndUpdate(userId, { $push: { following: followUserId } });
+        await UserModel.findByIdAndUpdate(followUserId, { $push: { followers: userId } });
+
+        res.status(200).json({message: "user followed"});
+    }
+    catch(error){
+        console.error(error);
+        res.status(500).json({message: "Internal server error"});
+    }
+}
+
+const handleGetSendUserForNotes = async (req, res) => {
+    const {uid} = req.params;
+    try{
+        const user = await UserModel.findById(uid).select("following");
+        if (!user){
+            return res.status(400).json({message: "user does not exist"});
+        }
+
+        const following = user.following;
+        const users = await UserModel.find({_id: {$in: following}}).select("fullName username profileImage");
+        console.log(users);
+        res.status(200).json(users);
+    }
+    catch(error){
+        console.error(error);
+        res.status(500).json({message: "Internal server error"});
+    }
 
 }
-module.exports = { handleRegisterUser, handleLoginUser, handleGetProfile }
+
+
+
+module.exports = { handleRegisterUser, handleLoginUser, handleGetProfile , handleGetSuggestionsUser, handlePostFollowUser, handleGetSendUserForNotes}

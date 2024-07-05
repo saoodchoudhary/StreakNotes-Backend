@@ -2,7 +2,8 @@ const mongoose = require('mongoose');
 
 const StreakSchema = new mongoose.Schema({
     userId: { type: mongoose.Schema.Types.ObjectId, ref: 'users' },
-    streakCount: { type: Number, default: 0 },
+    streak: { type: Array, default: [] },
+    restoreStreak: { type: Array, default: [] },
     lastUpdated: { type: Date, default: Date.now },
   });
 
