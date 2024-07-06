@@ -177,9 +177,29 @@ const handleGetSomeUser = async (req, res) => {
     res.status(200).json(suggestions)
 }
 
+const handleGetFollowerFollowingUser = async (req, res) => {
+    const {uid} = req.params;
+    console.log(uid);
+    try{
+        const user = await UserModel.findById(uid).select("followers following");
+        if (!user){
+            return res.status(400).json({message: "user does not exist"});
+        }
+        const followers = user.followers;
+        const following = user.following;
+        const followersList = await UserModel.find({_id: {$in: followers}}).select("fullName username profileImage");
+        const followingList = await UserModel.find({_id: {$in: following}}).select("fullName username profileImage");
+        res.status(200).json({followers: followersList, following: followingList});
+    }
+    catch(error){
+        console.error(error);
+        res.status(500).json({message: "Internal server error"});
+    }
+}
 
 
 module.exports = { handleRegisterUser, handleLoginUser, handleGetProfile , handleGetSuggestionsUser, handlePostFollowUser, handleGetSendUserForNotes, 
     handleGetSearchUser,
-    handleGetSomeUser
+    handleGetSomeUser,
+    handleGetFollowerFollowingUser
 }
