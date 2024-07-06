@@ -8,7 +8,7 @@ const NotesSchema = new mongoose.Schema({
   voice: { type: String },  // URL to the voice recording
   image: { type: String , },  // URL to the image
   video: { type: String },  // URL to the video
-  owner: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
+  owner: { type: mongoose.Schema.Types.ObjectId, ref: 'users', required: true },
   sharedWith: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }],
   pausedUntil: { type: Date },
   createdAt: { type: Date, default: Date.now },

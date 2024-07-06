@@ -135,7 +135,6 @@ const handleGetSendUserForNotes = async (req, res) => {
         if (!user){
             return res.status(400).json({message: "user does not exist"});
         }
-
         const following = user.following;
         const users = await UserModel.find({_id: {$in: following}}).select("fullName username profileImage");
         console.log(users);
@@ -146,8 +145,41 @@ const handleGetSendUserForNotes = async (req, res) => {
         res.status(500).json({message: "Internal server error"});
     }
 
+};
+
+
+const handleGetSearchUser = async (req, res) => {
+    const {term} = req.query;
+    try{
+        const users = await UserModel.find({fullName: {$regex: term, $options: 'i'}}).select("fullName username profileImage");
+        res.status(200).json(users);
+    }
+    catch(error){
+        console.error(error);
+        res.status(500).json({message: "Internal server error"});
+    }
+};
+
+const handleGetSomeUser = async (req, res) => {
+    const { uid } = req.params;
+
+    // Fetch the current user to get their following list
+    const currentUser = await UserModel.findById(uid).select('following');
+    if (!currentUser) {
+        return res.status(404).json({ message: 'User not found' });
+    }
+
+    // Find users that are not in the current user's following list and not the user themselves
+    const suggestions = await UserModel.find({ 
+        _id: { $ne: uid, $nin: currentUser.following } 
+    }).select('fullName username profileImage ').limit(15);
+
+    res.status(200).json(suggestions)
 }
 
 
 
-module.exports = { handleRegisterUser, handleLoginUser, handleGetProfile , handleGetSuggestionsUser, handlePostFollowUser, handleGetSendUserForNotes}
+module.exports = { handleRegisterUser, handleLoginUser, handleGetProfile , handleGetSuggestionsUser, handlePostFollowUser, handleGetSendUserForNotes, 
+    handleGetSearchUser,
+    handleGetSomeUser
+}

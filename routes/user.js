@@ -1,4 +1,4 @@
-const { handleRegisterUser, handleLoginUser, handleGetProfile, handleGetSuggestionsUser, handlePostFollowUser, handleGetSendUserForNotes } = require('../controller/user')
+const { handleRegisterUser, handleLoginUser, handleGetProfile, handleGetSuggestionsUser, handlePostFollowUser, handleGetSendUserForNotes, handleGetSearchUser, handleGetSomeUser } = require('../controller/user')
 
 const router = require('express').Router()
 
@@ -13,6 +13,10 @@ router.get("/getSuggestionsUser/:uid", handleGetSuggestionsUser)
 
 router.post("/follow", handlePostFollowUser)
 router.get("/getSendUserForNotes/:uid", handleGetSendUserForNotes)
+
+router.get("/search", handleGetSearchUser);
+
+router.get("/someUser/:uid", handleGetSomeUser);
 
 
 module.exports = router

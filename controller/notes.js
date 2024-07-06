@@ -85,8 +85,28 @@ const handleSendNotes = async (req, res) => {
   }
 };
 
+const handleRecieveNotes = async (req, res) => {
+    const { uid } = req.params;
+    try {
+      const recievedNotes = await UserModel.findById({_id: uid}).populate('recievedNotes');
+      // console.log('rec', recievedNotes.recievedNotes);
+      for (const note of recievedNotes.recievedNotes) {
+        await note.populate('owner');
+        
+      }
+      console.log('rec', recievedNotes.recievedNotes);
+      res.status(200).json(recievedNotes);
+    }
+    catch (error) {
+      console.error(error);
+      res.status(500).json({ message: 'Server error' });
+    }
+  }
+
+
 module.exports = {
     handleSaveNote,
     handleNotesList,
-    handleSendNotes
+    handleSendNotes,
+    handleRecieveNotes
 };
