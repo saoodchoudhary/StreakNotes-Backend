@@ -1,38 +1,34 @@
-const AchievementModel = require("../model/AchievementModel");
-const UserModel = require("../model/UserModel");
+const checkAndUpdateAchievements = async (user) => {
+  const achievements = [];
 
-const checkAchievements = async (userId) => {
-    const user = await UserModel.findById(userId).populate('notes streaks');
-  
-    const noteCount = user.notes.length;
-    const longestStreak = Math.max(...user.streaks.map(streak => streak.count));
-  
-    const achievements = [];
-  
-    // Checking note count achievements
-    if (noteCount >= 10) achievements.push({ stars: 1, level: 'Bronze' });
-    if (noteCount >= 25) achievements.push({ stars: 2, level: 'Silver' });
-    if (noteCount >= 50) achievements.push({ stars: 3, level: 'Gold' });
-    if (noteCount >= 100) achievements.push({ stars: 4, level: 'Diamond' });
-    if (noteCount >= 200) achievements.push({ stars: 5, level: 'Platinum' });
+  if (user.streaks.length > 0) {
+    achievements.push('First Streak');
+  }
+  if (user.streaks.length >= 7) {
+    achievements.push('Week Streak');
+  }
+  if (user.streaks.length >= 30) {
+    achievements.push('Month Streak');
+  }
+  if (user.streaks.length >= 100) {
+    achievements.push('100 Days Streak');
+  }
+  if (user.streaks.length >= 365) {
+    achievements.push('Streak Master');
+  }
+  if (( user.notes.sharedWith && user.notes.sharedWith.length >= 5)) {
+    achievements.push('Collaborator');
+  }
+  if (user.notes.length >= 10) {
+    achievements.push('Note Creator');
+  }
+  if (user.notes.length >= 50) {
+    achievements.push('Note Master');
+  }
 
-  
-    // Checking streak achievements
-    if (longestStreak >= 7) achievements.push({ stars: 1, level: 'Bronze' });
-    if (longestStreak >= 30) achievements.push({ stars: 2, level: 'Silver' });
-    if (longestStreak >= 100) achievements.push({ stars: 3, level: 'Gold' });
-    if (longestStreak >= 200) achievements.push({ stars: 4, level: 'Diamond' });
-    if (longestStreak >= 365) achievements.push({ stars: 5, level: 'Platinum' });
-  
-    for (const ach of achievements) {
-      const achievement = new AchievementModel(ach);
-      console.log(achievement);
-      await achievement.save();
-      user.achievements.push(achievement);
-    }
-  
-    await user.save();
-  };
-  
+  user.achievements = [...new Set(achievements)]; // Remove duplicates
+  await user.save();
+};
 
-  module.exports = checkAchievements;
+
+module.exports = checkAndUpdateAchievements;

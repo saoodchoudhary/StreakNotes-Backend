@@ -64,12 +64,12 @@ const handleGetProfile = async (req, res) => {
     
 
     try{
-        const user = await UserModel.findById(uid);
+        const user = await UserModel.findById(uid).select("fullName email username followers following streaks score profileType profileImage profileBannerImage totalNotes createdAt updatedAt achievements");
         if (!user){
             return res.status(400).json({message: "user does not exist"});
         }
 
-        res.status(200).json( {fullName: user.fullName, email: user.email, username: user.username, followers: user.followers.length, following: user.following.length , streaks: user.streaks.length, score: user.score, profileType: user.profileType, profileImage: user.profileImage, profileBannerImage: user.profileBannerImage, totalNotes: user.totalNotes, createdAt: user.createdAt, updatedAt: user.updatedAt});
+        res.status(200).json(user);
     }catch(error){
         console.error(error);
         res.status(500).json({message: "Internal server error"});

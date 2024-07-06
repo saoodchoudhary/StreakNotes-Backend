@@ -1,8 +1,10 @@
 const StreakModel = require("../model/StreakModel");
 const UserModel = require("../model/UserModel");
+const checkAndUpdateAchievements = require("./checkAchievments");
 
 // Update streak endpoint
 const StreakUpdate = async (uid, dateId) => {
+    const user = await UserModel.findById(uid);
   
     try {
         const streak = await StreakModel.findOne({userId: uid});
@@ -33,6 +35,8 @@ const StreakUpdate = async (uid, dateId) => {
         streak.streakCount += 1;
         streak.lastUpdated = now;
         streak.streakDates.push(dateId);
+
+        await checkAndUpdateAchievements(user);
         await streak.save();
        return { message: 'Streak updated' };
       } else {

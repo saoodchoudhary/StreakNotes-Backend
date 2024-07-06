@@ -3,6 +3,7 @@ const StreakUpdate = require("../helpers/streakUpdate");
 const NotesModel = require("../model/NotesModel");
 const StreakModel = require("../model/StreakModel");
 const UserModel = require("../model/UserModel");
+const checkAndUpdateAchievements = require("../helpers/checkAchievments");
 
 
 
@@ -30,6 +31,8 @@ const handleSaveNote = async (req, res) => {
 
             await UserModel.findByIdAndUpdate(uid, { $push: { notes: newNote._id } });
             await newNote.save();
+
+            await checkAndUpdateAchievements(user);
             res.json({ newNote, noteId: newNote._id });
         }
 
@@ -104,9 +107,26 @@ const handleRecieveNotes = async (req, res) => {
   }
 
 
+  const handleFetchOneNotes = async (req, res) => {
+    const { noteId } = req.params;
+    try {
+      const note = await NotesModel.findById(noteId);
+      if (!note) {
+        return res.status(404).json({ message: 'Note not found' });
+      }
+      res.status(200).json(note);
+    } catch (error) {
+      console.error(error);
+      res.status(500).json({ message: 'Server error' });
+    }
+  }
+
+
+
 module.exports = {
     handleSaveNote,
     handleNotesList,
     handleSendNotes,
-    handleRecieveNotes
+    handleRecieveNotes,
+    handleFetchOneNotes
 };

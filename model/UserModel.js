@@ -7,6 +7,8 @@ const UserSchema = new mongoose.Schema({
     password: { type: String, required: true },
     profileType: { type: String, enum: ['public', 'private'], default: 'public' },
     streaks: [{ type: mongoose.Schema.Types.ObjectId, ref: 'streaks' }],
+
+  achievements: { type: Array , default : []}, // Array to store achievement levels
     score: { type: Number, default: 0 },
     profileImage: { type: String , default : "" },  // URL to the profile image
     profileBannerImage: { type: String , default : ""},  // URL to the profile banner image
