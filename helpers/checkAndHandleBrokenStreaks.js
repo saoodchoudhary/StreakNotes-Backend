@@ -14,7 +14,7 @@ const checkAndHandleBrokenStreaks = async () => {
 
             if (diffHours >= 2) {
                 streak.streakCount = 0; // Reset the streak
-                streak.lastUpdated = now;
+                // streak.lastUpdated = now;
                 await streak.save();
                 await sendNotesBackToOwner(streak.userId);
             }

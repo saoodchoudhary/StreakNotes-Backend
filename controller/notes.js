@@ -7,39 +7,29 @@ const checkAndUpdateAchievements = require("../helpers/checkAchievments");
 
 
 
+// save note
 const handleSaveNote = async (req, res) => {
     const { noteId, content, dateId, uid } = req.body;
     const user = await UserModel.findById({ _id: uid });
-    // update score
-
-
-
 
     //    find user streak and update it
     const streak = await StreakUpdate(uid, dateId)
     // console.log('streak', streak);
 
-
-    try {
-      
+    try {      
         if (noteId) {
             await NotesModel.findByIdAndUpdate(noteId, { content, owner: user })
-
             res.json({ noteId });
         }
-
         else {
             const newNote = new NotesModel({
                 dateId, content, owner: user
             });
-
             await UserModel.findByIdAndUpdate(uid, { $push: { notes: newNote._id } });
             await newNote.save();
-
             await checkAndUpdateAchievements(user);
             res.json({ newNote, noteId: newNote._id });
         }
-
     }
     catch (error) {
         console.error('Failed to save note', error);
@@ -48,6 +38,7 @@ const handleSaveNote = async (req, res) => {
 }
 
 
+// fetch notes for the user and today's date
 const handleNotesList = async (req, res) => {
     const { uid, dateId } = req.body;
     try {
@@ -62,6 +53,8 @@ const handleNotesList = async (req, res) => {
     }
 };
 
+
+// send notes to other users
 const handleSendNotes = async (req, res) => {
     const { noteId, userIds } = req.body;
 
@@ -92,6 +85,7 @@ const handleSendNotes = async (req, res) => {
   }
 };
 
+// fetch recieved notes
 const handleRecieveNotes = async (req, res) => {
     const { uid } = req.params;
     try {
@@ -112,6 +106,7 @@ const handleRecieveNotes = async (req, res) => {
   }
 
 
+  // fetch one notes for update note but first view the note
   const handleFetchOneNotes = async (req, res) => {
     const { noteId } = req.params;
     try {

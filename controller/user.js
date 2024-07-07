@@ -4,6 +4,7 @@ const bcrypt = require('bcryptjs');
 const UserModel = require("../model/UserModel");
 const jwt = require('jsonwebtoken');
 const checkAchievements = require("../helpers/checkAchievments");
+const StreakModel = require("../model/StreakModel");
 
 
 const generateToken = (user) => {
@@ -22,7 +23,16 @@ const handleRegisterUser = async (req, res) => {
         const newUser = new UserModel({fullName, username, email, password: hashedPassword});
         const token = generateToken(newUser);
 
-        await newUser.save();
+        
+        
+        const saveUser =   await newUser.save();
+
+        const newStreak = new StreakModel({userId: saveUser._id});
+        await saveUser.streaks.push(newStreak._id);
+        await saveUser.save();
+        await newStreak.save();
+
+
         res.status(201).json({ uid: newUser._id, token });
 
     }catch(error){
