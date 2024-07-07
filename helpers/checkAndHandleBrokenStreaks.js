@@ -1,6 +1,5 @@
 const cron = require('node-cron');
 const StreakModel = require('../model/StreakModel');
-const NotesModel = require('../model/NotesModel');
 const UserModel = require('../model/UserModel');
 
 const checkAndHandleBrokenStreaks = async () => {
@@ -13,8 +12,8 @@ const checkAndHandleBrokenStreaks = async () => {
             const diffTime = Math.abs(now - lastUpdated);
             const diffHours = diffTime / (1000 * 60 );
 
-            if (diffHours >= 1) {
-                streak.streakCount = 0;
+            if (diffHours >= 2) {
+                streak.streakCount = 0; // Reset the streak
                 streak.lastUpdated = now;
                 await streak.save();
                 await sendNotesBackToOwner(streak.userId);

@@ -13,6 +13,10 @@ const StreakUpdate = async (uid, dateId) => {
       if (!streak) {
         const newStreak = new StreakModel({userId: uid});
         await UserModel.findByIdAndUpdate(uid, { $push: { streaks: newStreak._id } });
+        // update Score
+
+        user.score += 2;
+        await user.save();
 
         newStreak.streak.push(dateId);
         await newStreak.save();
@@ -22,19 +26,24 @@ const StreakUpdate = async (uid, dateId) => {
       const now = new Date();
       const lastUpdated = new Date(streak.lastUpdated);
       const diffTime = Math.abs(now - lastUpdated);
-      const diffHours = diffTime / (1000 * 60 * 60);
+      const diffHours = diffTime / (1000 * 60);
+      console.log('diffHours', diffHours);  
       
-      if (diffHours >= 48) {
+      if (diffHours >= 2) {
         streak.streakCount = 0;
         streak.lastUpdated = now;
         await streak.save();
         return { message: 'Streak reset due to inactivity', streak };
       }
       
-      if (diffHours >= 24) {
+      if (diffHours >= 1) {
+        
         streak.streakCount += 1;
+        streak.maxStreak = Math.max(streak.maxStreak, streak.streakCount);
+        user.score += 2;
+        await user.save();
         streak.lastUpdated = now;
-        streak.streakDates.push(dateId);
+        streak.streak.push(dateId);
 
         await checkAndUpdateAchievements(user);
         await streak.save();

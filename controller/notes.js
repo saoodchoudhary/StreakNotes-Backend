@@ -10,14 +10,18 @@ const checkAndUpdateAchievements = require("../helpers/checkAchievments");
 const handleSaveNote = async (req, res) => {
     const { noteId, content, dateId, uid } = req.body;
     const user = await UserModel.findById({ _id: uid });
+    // update score
+
+
 
 
     //    find user streak and update it
     const streak = await StreakUpdate(uid, dateId)
-    console.log('streak', streak);
+    // console.log('streak', streak);
 
 
     try {
+      
         if (noteId) {
             await NotesModel.findByIdAndUpdate(noteId, { content, owner: user })
 
@@ -92,12 +96,13 @@ const handleRecieveNotes = async (req, res) => {
     const { uid } = req.params;
     try {
       const recievedNotes = await UserModel.findById({_id: uid}).populate('recievedNotes');
-      // console.log('rec', recievedNotes.recievedNotes);
+      console.log('rec', recievedNotes);
+
       for (const note of recievedNotes.recievedNotes) {
+        console.log('note', note);  
         await note.populate('owner');
         
       }
-      console.log('rec', recievedNotes.recievedNotes);
       res.status(200).json(recievedNotes);
     }
     catch (error) {

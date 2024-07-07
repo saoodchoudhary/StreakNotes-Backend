@@ -64,7 +64,7 @@ const handleGetProfile = async (req, res) => {
     
 
     try{
-        const user = await UserModel.findById(uid).select("fullName email username followers following streaks score profileType profileImage profileBannerImage totalNotes createdAt updatedAt achievements");
+        const user = await UserModel.findById(uid).populate("streaks").populate("streaks");
         if (!user){
             return res.status(400).json({message: "user does not exist"});
         }
