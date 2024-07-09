@@ -5,16 +5,44 @@ const UserModel = require("../model/UserModel");
 const jwt = require('jsonwebtoken');
 const checkAchievements = require("../helpers/checkAchievments");
 const StreakModel = require("../model/StreakModel");
+const { sendOtpEmail } = require("../helpers/otpEmail");
+const OtpVerifyModel = require("../model/OtpVerify");
 
 
 const generateToken = (user) => {
     return jwt.sign({ id: user._id, username: user.username }, process.env.JWT_SECRET_KEY, { expiresIn: '1h' });
   };
 
+
+  const handleOtpSendtoUser = async (req, res) => {
+    const {email} = req.body;
+    console.log(req.body);
+    try{
+        const user = await UserModel.findOne({email: email});
+        if (user){
+            return res.status(400).json({message: "email already exists"});
+        }
+        const otp = Math.floor(100000 + Math.random() * 900000);
+        sendOtpEmail(email, otp);
+        const newOtp = new OtpVerifyModel({email, otp});
+        await newOtp.save();
+        res.status(200).json({message: "otp sent"});
+    }catch(error){
+        console.error(error);
+        res.status(500).json({message: "Internal server error"});
+    }
+}
+
 // Register a new user --
-const handleRegisterUser = async (req, res) => {
-    const {fullName, email, password} = req.body;
+const handleOtpRegisterUser = async (req, res) => {
+    const {fullName, email, password, otp} = req.body;
     console.log(req.body)
+
+    const otpVerify = await OtpVerifyModel.findOne({email, otp});
+    if (!otpVerify){
+        return res.status(400).json({message: "otp is incorrect"});
+    }
+
 
     try{
         const username = await generateUsername(fullName);
@@ -31,13 +59,35 @@ const handleRegisterUser = async (req, res) => {
         await saveUser.streaks.push(newStreak._id);
         await saveUser.save();
         await newStreak.save();
+        console.log(saveUser , token);
 
 
-        res.status(201).json({ uid: newUser._id, token });
+        res.status(201).json({ uid: saveUser._id, token });
 
     }catch(error){
         console.error(error);
         res.status(500).json({message: "Internal server error"});
+    }
+}
+
+const handleResendOtp = async (req, res) => {
+    console.log(req.body);
+    const { email } = req.body.data;
+    const otp = Math.floor(100000 + Math.random() * 900000);
+    try {
+        const alreadySavedOtp = await OtpVerifyModel.findOne({ email });
+        sendOtpEmail(email, otp);
+        if (alreadySavedOtp) {
+            await OtpVerifyModel.findByIdAndUpdate(alreadySavedOtp._id, {
+                otp: otp,
+            });
+        } else {
+            await OtpVerifyModel.create({ email, otp: otp });
+        }
+        res.status(200).json({ mssg: "OTP sent successfully" });
+    }
+    catch (error) {
+        res.status(500).json({ error: error.message });
     }
 }
 
@@ -208,7 +258,15 @@ const handleGetFollowerFollowingUser = async (req, res) => {
 }
 
 
-module.exports = { handleRegisterUser, handleLoginUser, handleGetProfile , handleGetSuggestionsUser, handlePostFollowUser, handleGetSendUserForNotes, 
+module.exports = {
+    handleOtpSendtoUser,
+     handleOtpRegisterUser,
+     handleResendOtp,
+     handleLoginUser,
+      handleGetProfile ,
+       handleGetSuggestionsUser,
+        handlePostFollowUser,
+         handleGetSendUserForNotes, 
     handleGetSearchUser,
     handleGetSomeUser,
     handleGetFollowerFollowingUser

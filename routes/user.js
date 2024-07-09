@@ -1,9 +1,14 @@
-const { handleRegisterUser, handleLoginUser, handleGetProfile, handleGetSuggestionsUser, handlePostFollowUser, handleGetSendUserForNotes, handleGetSearchUser, handleGetSomeUser, handleGetFollowerFollowingUser } = require('../controller/user')
+const { handleRegisterUser, handleLoginUser, handleGetProfile, handleGetSuggestionsUser, handlePostFollowUser, handleGetSendUserForNotes, handleGetSearchUser, handleGetSomeUser, handleGetFollowerFollowingUser, handleOtpSendtoUser, handleOtpRegisterUser, handleResendOtp } = require('../controller/user')
 
 const router = require('express').Router()
 
 
-router.post("/register", handleRegisterUser)
+
+
+router.post("/otp-register", handleOtpSendtoUser)
+
+router.post("/verify-otp", handleOtpRegisterUser)
+router.post("/resend-otp", handleResendOtp)
 
 router.post("/login", handleLoginUser)
 
