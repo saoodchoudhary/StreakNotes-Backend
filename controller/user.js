@@ -258,6 +258,19 @@ const handleGetFollowerFollowingUser = async (req, res) => {
 }
 
 
+const handleGetAllUsers = async (req, res) => {
+    try{
+        const users = await UserModel.find().select("fullName username profileImage");
+        res.status(200).json(users);
+    }
+    catch(error){
+        console.error(error);
+        res.status(500).json({message: "Internal server error"});
+    }
+}
+
+
+
 module.exports = {
     handleOtpSendtoUser,
      handleOtpRegisterUser,
@@ -269,5 +282,6 @@ module.exports = {
          handleGetSendUserForNotes, 
     handleGetSearchUser,
     handleGetSomeUser,
-    handleGetFollowerFollowingUser
+    handleGetFollowerFollowingUser,
+    handleGetAllUsers
 }
