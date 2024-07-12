@@ -165,22 +165,31 @@ const handleGetSuggestionsUser = async (req, res) => {
 const handlePostFollowUser = async (req, res) => {
 
     const {userId, followUserId} = req.body;
+
     console.log(req.body);
     try{
         const user = await UserModel.findById(userId);
+
         const followUser = await UserModel.findById(followUserId);
+
         if (!user || !followUser){
             return res.status(400).json({message: "user does not exist"});
         }
 
         if (user.following.includes(followUserId)){
-            return res.status(400).json({message: "user already followed"});
-        }
+            // user unfollow
+            await UserModel.findByIdAndUpdate(userId, { $pull: { following: followUserId } });
+            await UserModel.findByIdAndUpdate(followUserId, { $pull: { followers: userId } });
+            res.status(200).json({message: "user unfollowed"});
+        }else{
+
+      
 
         await UserModel.findByIdAndUpdate(userId, { $push: { following: followUserId } });
         await UserModel.findByIdAndUpdate(followUserId, { $push: { followers: userId } });
 
-        res.status(200).json({message: "user followed"});
+        res.status(200).json({message: "user followed"}); 
+     }
     }
     catch(error){
         console.error(error);

@@ -29,8 +29,17 @@ const checkAndHandleBrokenStreaks = async () => {
 const sendNotesBackToOwner = async (userId) => {
     try {
         const userRecievingNotes = await UserModel.findById(userId).populate('notes');
-
+        // if notes is empty than return
+       
+        if(Array(userRecievingNotes.notes).length === 0){
+            return;
+        }
+        console.log('userRecievingNotes.notes', userRecievingNotes.notes.length);
         for( const note of userRecievingNotes.notes){
+            
+            if(note.sharedWith.length === 0){
+                continue;
+            }
             for (const sharedWith of note.sharedWith) {
             const receivedUser = await UserModel.findById(sharedWith);
             console.log('receivedUser.recievedNotes', receivedUser.recievedNotes);
