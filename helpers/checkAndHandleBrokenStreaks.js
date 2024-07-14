@@ -10,9 +10,9 @@ const checkAndHandleBrokenStreaks = async () => {
         for (const streak of streaks) {
             const lastUpdated = new Date(streak.lastUpdated);
             const diffTime = Math.abs(now - lastUpdated);
-            const diffHours = diffTime / (1000 * 60 );
+            const diffHours = diffTime / (1000 * 60 * 60 );
 
-            if (diffHours >= 2) {
+            if (diffHours >= 48) {
                 streak.streakCount = 0; // Reset the streak
                 // streak.lastUpdated = now;
                 await streak.save();
@@ -59,7 +59,7 @@ const sendNotesBackToOwner = async (userId) => {
 };
 
 // Schedule the cron job to run every hour
-cron.schedule('* * * * *', checkAndHandleBrokenStreaks);
+cron.schedule('0 * * * *', checkAndHandleBrokenStreaks);
 
 // Export the function to manually trigger if needed
 module.exports = { checkAndHandleBrokenStreaks };
