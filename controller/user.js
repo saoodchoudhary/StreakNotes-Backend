@@ -220,7 +220,7 @@ const handleGetSendUserForNotes = async (req, res) => {
 const handleGetSearchUser = async (req, res) => {
     const {term} = req.query;
     try{
-        const users = await UserModel.find({fullName: {$regex: term, $options: 'i'}}).select("fullName username profileImage");
+        const users = await UserModel.find({username: {$regex: term, $options: 'i'}}).select("fullName username profileImage");
         res.status(200).json(users);
     }
     catch(error){

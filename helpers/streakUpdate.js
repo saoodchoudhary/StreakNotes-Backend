@@ -26,17 +26,17 @@ const StreakUpdate = async (uid, dateId) => {
       const now = new Date();
       const lastUpdated = new Date(streak.lastUpdated);
       const diffTime = Math.abs(now - lastUpdated);
-      const diffHours = diffTime / (1000 * 60);
+      const diffHours = diffTime / (1000 * 60 * 60 );
       console.log('diffHours', diffHours);  
       
-      if (diffHours >= 2) {
+      if (diffHours >= 48) {
         streak.streakCount = 0;
         streak.lastUpdated = now;
         await streak.save();
         return { message: 'Streak reset due to inactivity', streak };
       }
       
-      if (diffHours >= 1) {
+      if (diffHours >= 24) {
         
         streak.streakCount += 1;
         streak.maxStreak = Math.max(streak.maxStreak, streak.streakCount);
