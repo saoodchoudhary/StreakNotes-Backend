@@ -188,7 +188,7 @@ const handlePostFollowUser = async (req, res) => {
         await UserModel.findByIdAndUpdate(userId, { $push: { following: followUserId } });
         await UserModel.findByIdAndUpdate(followUserId, { $push: { followers: userId } });
 
-        res.status(200).json({message: "user followed"}); 
+        res.status(200).json({message: "Followed"}); 
      }
     }
     catch(error){
