@@ -3,7 +3,6 @@ const generateUsername = require("../helpers/generateUsername");
 const bcrypt = require('bcryptjs');
 const UserModel = require("../model/UserModel");
 const jwt = require('jsonwebtoken');
-const checkAchievements = require("../helpers/checkAchievments");
 const StreakModel = require("../model/StreakModel");
 const { sendOtpEmail } = require("../helpers/otpEmail");
 const OtpVerifyModel = require("../model/OtpVerify");
