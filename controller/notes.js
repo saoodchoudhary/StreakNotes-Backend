@@ -9,7 +9,7 @@ const checkAndUpdateAchievements = require("../helpers/checkAchievments");
 
 // save note
 const handleSaveNote = async (req, res) => {
-    const { noteId, content, dateId, uid } = req.body;
+    const { noteId, title, content, dateId, uid } = req.body;
     const user = await UserModel.findById({ _id: uid });
 
     //    find user streak and update it
@@ -18,11 +18,12 @@ const handleSaveNote = async (req, res) => {
 
     try {      
         if (noteId) {
-            await NotesModel.findByIdAndUpdate(noteId, { content, owner: user })
+            await NotesModel.findByIdAndUpdate(noteId, { title, content, owner: user })
             res.json({ noteId });
         }
         else {
             const newNote = new NotesModel({
+                title,
                 dateId, content, owner: user
             });
             await UserModel.findByIdAndUpdate(uid, { $push: { notes: newNote._id } });
