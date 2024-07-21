@@ -1,8 +1,10 @@
 const express = require('express');
+const multer = require('multer');
 const app = express();
 require("dotenv").config();
 const mongoose = require('mongoose');
 const cors = require('cors');
+const path = require('path');
 
 const PORT = process.env.PORT || 8000;
 
@@ -21,6 +23,33 @@ app.get('/', (req, res) => {
     res.send('Hello World!');
     }
 );
+
+// configure multer
+
+const storage = multer.diskStorage({
+    destination: function (req, file, cb){
+        cb(null, 'uploads/'); // uploads is the folder name    
+    },
+    filename: function(req, file, cb){
+        cb(null,  Date.now() + path.extname(file.originalname));
+    }
+});
+
+const upload = multer({storage: storage, limits : {fileSize: 100000000} });
+
+app.post('/api/upload', upload.single('file'), (req, res)=>{
+    console.log('file', req.file);
+    if(req.file){
+        res.json({url: '/uploads/' + req.file.filename});
+    }else{
+        res.send('file not uploaded');
+    }
+});
+
+app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
+
+
+//end of multer configuration
 
 
 
